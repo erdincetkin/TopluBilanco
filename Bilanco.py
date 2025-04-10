@@ -7,7 +7,7 @@ hisseler=["EREGL","TAVHL"]  #Hisse kodlarını istediğiniz sayıda yazabilirsin
 for i in hisseler:
     hisse=i
     tarihler=[]
-    yıllar=[]
+    yillar=[]
     donemler=[]
     grup=[]
 
@@ -18,13 +18,13 @@ for i in hisseler:
     secim2=soup.find("select",id="ddlMaliTabloGroup")
     
     try:
-        cocuklar=secim.findChildren("option")
+        cocuklar=secim.find_all("option")
         grup=secim2.find("option")["value"]
         
         for i in cocuklar:
             tarihler.append(i.string.rsplit("/"))
         for j in tarihler:
-            yıllar.append(j[0])
+            yillar.append(j[0])
             donemler.append(j[1])
 
         if len(tarihler)>=4:
@@ -32,13 +32,13 @@ for i in hisseler:
                 ("companyCode",hisse),
                 ("exchange","TRY"), #Eğer dolar bazlı istiyorsanız "TRY" yerine "USD" yazınız
                 ("financialGroup",grup),
-                ("year1",yıllar[0]),
+                ("year1",yillar[0]),
                 ("period1",donemler[0]),
-                ("year2",yıllar[1]),
+                ("year2",yillar[1]),
                 ("period2",donemler[1]),
-                ("year3",yıllar[2]),
+                ("year3",yillar[2]),
                 ("period3",donemler[2]),
-                ("year4",yıllar[3]),
+                ("year4",yillar[3]),
                 ("period4",donemler[3]))
             url2="https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/Common/Data.aspx/MaliTablo"
             r2=requests.get(url2,params=parametreler).json()["value"]
@@ -53,13 +53,13 @@ for i in hisseler:
     tumveri=[veri]
         
     for _ in range(0,12):
-        if len(tarihler)==len(yıllar):
+        if len(tarihler)==len(yillar):
             del tarihler[0:4]
         else:
-            yıllar=[]
+            yillar=[]
             donemler=[]
             for j in tarihler:
-                yıllar.append(j[0])
+                yillar.append(j[0])
                 donemler.append(j[1])
             
             if len(tarihler)>=4:
@@ -67,13 +67,13 @@ for i in hisseler:
                 ("companyCode",hisse),
                 ("exchange","TRY"), #Eğer dolar bazlı istiyorsanız "TRY" yerine "USD" yazınız
                 ("financialGroup",grup),
-                ("year1",yıllar[0]),
+                ("year1",yillar[0]),
                 ("period1",donemler[0]),
-                ("year2",yıllar[1]),
+                ("year2",yillar[1]),
                 ("period2",donemler[1]),
-                ("year3",yıllar[2]),
+                ("year3",yillar[2]),
                 ("period3",donemler[2]),
-                ("year4",yıllar[3]),
+                ("year4",yillar[3]),
                 ("period4",donemler[3]))
                 r3=requests.get(url2,params=parametreler2).json()["value"]
                 veri2=pd.DataFrame.from_dict(r3)
@@ -95,5 +95,5 @@ for i in hisseler:
     veri3=veri3.set_axis(baslık,axis=1)
     veri3[baslık[1:]]=veri3[baslık[1:]].astype(float)
     veri3=veri3.fillna(0)
-    dizin="C:/Users/YUNUS/Desktop" #Dosyayı kaydetmek istediğiniz dizini yazın
+    dizin="C:/Users/erdin/Documents" #Dosyayı kaydetmek istediğiniz dizini yazın
     veri3.to_excel(dizin+"/{}.xlsx".format(hisse),index=False)
